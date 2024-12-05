@@ -3,9 +3,12 @@ package com.leopold.javalearning.springboot.config;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * <p>
@@ -14,7 +17,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * </p>
  */
 @Configuration
-public class ActuatorSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     /*
         This spring security configuration does the following
@@ -30,13 +38,18 @@ public class ActuatorSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.formLogin()
+                .loginPage("/login.html")
+                .loginProcessingUrl("/login/doLogin")
+                .successForwardUrl("/index")
+                .failureForwardUrl("/login/error");
         http
                 .authorizeRequests()
                 .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class)).hasRole("ACTUATOR_ADMIN")
                 .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .antMatchers("/").permitAll()
-                .antMatchers("/**").authenticated()
+                .antMatchers("/*").permitAll()
+//                .antMatchers("/**").authenticated()
                 .and()
                 .httpBasic();
     }

@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/learning?serverTimezone=UTC&useSSL=false
+    url: jdbc:mysql://localhost:3306/learning?allowPublicKeyRetrieval=true&serverTimezone=UTC&useSSL=false
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -40,7 +40,7 @@ spring:
       password: actuator
       roles: ACTUATOR_ADMIN
 mybatis-plus:
-  mapper-locations: classpath*:/com/lihaowu/springactuator/mapper/*.xml
+  mapper-locations: classpath*:com/leopold/javalearning/springboot/mapper/*.xml
   type-aliases-package: com.lihaowu.springactuator.model
   configuration:
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
